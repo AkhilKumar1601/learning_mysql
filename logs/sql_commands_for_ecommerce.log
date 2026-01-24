@@ -1,0 +1,231 @@
+mysql> USE ecommerce;
+Database changed
+mysql> SELECT DATABASE;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 1
+mysql> SELECT DATABASE();
++------------+
+| DATABASE() |
++------------+
+| ecommerce  |
++------------+
+1 row in set (0.00 sec)
+
+mysql> CREATE TABLE users (
+    ->     user_id INT PRIMARY KEY,
+    ->     name VARCHAR(100),
+    ->     email VARCHAR(100),
+    ->     city VARCHAR(50),
+    ->     signup_date DATE
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> INSERT INTO users VALUES
+    -> (1, 'Akhil Kumar', 'akhil@gmail.com', 'Bangalore', '2023-01-10'),
+    -> (2, 'Rahul Sharma', 'rahul@gmail.com', 'Delhi', '2023-02-15'),
+    -> (3, 'Sneha Patel', 'sneha@gmail.com', 'Mumbai', '2023-03-20'),
+    -> (4, 'Neha Singh', 'neha@gmail.com', 'Pune', '2023-04-05');
+Query OK, 4 rows affected (0.04 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE products (
+    ->     product_id INT PRIMARY KEY,
+    ->     product_name VARCHAR(100),
+    ->     category VARCHAR(50),
+    ->     price DECIMAL(10,2)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> INSERT INTO products VALUES
+    -> (101, 'iPhone 14', 'Electronics', 70000),
+    -> (102, 'Samsung Galaxy S23', 'Electronics', 65000),
+    -> (103, 'Nike Shoes', 'Fashion', 8000),
+    -> (104, 'MacBook Air', 'Electronics', 120000),
+    -> (105, 'T-Shirt', 'Fashion', 1500);
+Query OK, 5 rows affected (0.00 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE orders (
+    ->     order_id INT PRIMARY KEY,
+    ->     user_id INT,
+    ->     order_date DATE,
+    ->     total_amount DECIMAL(10,2),
+    ->     FOREIGN KEY (user_id) REFERENCES users(user_id)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> INSERT INTO orders VALUES
+    -> (1001, 1, '2023-05-01', 70000),
+    -> (1002, 2, '2023-05-03', 8000),
+    -> (1003, 1, '2023-05-10', 120000),
+    -> (1004, 3, '2023-06-01', 1500),
+    -> (1005, 4, '2023-06-15', 65000);
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE order_items (
+    ->     order_item_id INT PRIMARY KEY,
+    ->     order_id INT,
+    ->     product_id INT,
+    ->     quantity INT,
+    ->     item_price DECIMAL(10,2),
+    ->     FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    ->     FOREIGN KEY (product_id) REFERENCES products(product_id)
+    -> );
+Query OK, 0 rows affected (0.07 sec)
+
+mysql> INSERT INTO order_items VALUES
+    -> (1, 1001, 101, 1, 70000),
+    -> (2, 1002, 103, 1, 8000),
+    -> (3, 1003, 104, 1, 120000),
+    -> (4, 1004, 105, 1, 1500),
+    -> (5, 1005, 102, 1, 65000);
+Query OK, 5 rows affected (0.03 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE user_activity (
+    ->     activity_id INT PRIMARY KEY,
+    ->     user_id INT,
+    ->     activity_type VARCHAR(50), -- click, view, add_to_cart
+    ->     activity_time TIMESTAMP,
+    ->     FOREIGN KEY (user_id) REFERENCES users(user_id)
+    -> );
+Query OK, 0 rows affected (0.10 sec)
+
+mysql> INSERT INTO user_activity VALUES
+    -> (1, 1, 'view', '2023-05-01 10:00:00'),
+    -> (2, 1, 'add_to_cart', '2023-05-01 10:05:00'),
+    -> (3, 2, 'view', '2023-05-03 12:00:00'),
+    -> (4, 3, 'view', '2023-06-01 14:00:00'),
+    -> (5, 4, 'click', '2023-06-15 16:00:00');
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SHOW TABLES;
++---------------------+
+| Tables_in_ecommerce |
++---------------------+
+| order_items         |
+| orders              |
+| products            |
+| user_activity       |
+| users               |
++---------------------+
+5 rows in set (0.01 sec)
+
+mysql> DESC users;
++-------------+--------------+------+-----+---------+-------+
+| Field       | Type         | Null | Key | Default | Extra |
++-------------+--------------+------+-----+---------+-------+
+| user_id     | int          | NO   | PRI | NULL    |       |
+| name        | varchar(100) | YES  |     | NULL    |       |
+| email       | varchar(100) | YES  |     | NULL    |       |
+| city        | varchar(50)  | YES  |     | NULL    |       |
+| signup_date | date         | YES  |     | NULL    |       |
++-------------+--------------+------+-----+---------+-------+
+5 rows in set (0.02 sec)
+
+mysql> DESC user_activity;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| activity_id   | int         | NO   | PRI | NULL    |       |
+| user_id       | int         | YES  | MUL | NULL    |       |
+| activity_type | varchar(50) | YES  |     | NULL    |       |
+| activity_time | timestamp   | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DESC products;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| product_id   | int           | NO   | PRI | NULL    |       |
+| product_name | varchar(100)  | YES  |     | NULL    |       |
+| category     | varchar(50)   | YES  |     | NULL    |       |
+| price        | decimal(10,2) | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+mysql> DESC orders;
++--------------+---------------+------+-----+---------+-------+
+| Field        | Type          | Null | Key | Default | Extra |
++--------------+---------------+------+-----+---------+-------+
+| order_id     | int           | NO   | PRI | NULL    |       |
+| user_id      | int           | YES  | MUL | NULL    |       |
+| order_date   | date          | YES  |     | NULL    |       |
+| total_amount | decimal(10,2) | YES  |     | NULL    |       |
++--------------+---------------+------+-----+---------+-------+
+4 rows in set (0.01 sec)
+
+mysql> DESC order_items;
++---------------+---------------+------+-----+---------+-------+
+| Field         | Type          | Null | Key | Default | Extra |
++---------------+---------------+------+-----+---------+-------+
+| order_item_id | int           | NO   | PRI | NULL    |       |
+| order_id      | int           | YES  | MUL | NULL    |       |
+| product_id    | int           | YES  | MUL | NULL    |       |
+| quantity      | int           | YES  |     | NULL    |       |
+| item_price    | decimal(10,2) | YES  |     | NULL    |       |
++---------------+---------------+------+-----+---------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM users;
++---------+--------------+-----------------+-----------+-------------+
+| user_id | name         | email           | city      | signup_date |
++---------+--------------+-----------------+-----------+-------------+
+|       1 | Akhil Kumar  | akhil@gmail.com | Bangalore | 2023-01-10  |
+|       2 | Rahul Sharma | rahul@gmail.com | Delhi     | 2023-02-15  |
+|       3 | Sneha Patel  | sneha@gmail.com | Mumbai    | 2023-03-20  |
+|       4 | Neha Singh   | neha@gmail.com  | Pune      | 2023-04-05  |
++---------+--------------+-----------------+-----------+-------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM user_activity;
++-------------+---------+---------------+---------------------+
+| activity_id | user_id | activity_type | activity_time       |
++-------------+---------+---------------+---------------------+
+|           1 |       1 | view          | 2023-05-01 10:00:00 |
+|           2 |       1 | add_to_cart   | 2023-05-01 10:05:00 |
+|           3 |       2 | view          | 2023-05-03 12:00:00 |
+|           4 |       3 | view          | 2023-06-01 14:00:00 |
+|           5 |       4 | click         | 2023-06-15 16:00:00 |
++-------------+---------+---------------+---------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++------------+--------------------+-------------+-----------+
+| product_id | product_name       | category    | price     |
++------------+--------------------+-------------+-----------+
+|        101 | iPhone 14          | Electronics |  70000.00 |
+|        102 | Samsung Galaxy S23 | Electronics |  65000.00 |
+|        103 | Nike Shoes         | Fashion     |   8000.00 |
+|        104 | MacBook Air        | Electronics | 120000.00 |
+|        105 | T-Shirt            | Fashion     |   1500.00 |
++------------+--------------------+-------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM orders;
++----------+---------+------------+--------------+
+| order_id | user_id | order_date | total_amount |
++----------+---------+------------+--------------+
+|     1001 |       1 | 2023-05-01 |     70000.00 |
+|     1002 |       2 | 2023-05-03 |      8000.00 |
+|     1003 |       1 | 2023-05-10 |    120000.00 |
+|     1004 |       3 | 2023-06-01 |      1500.00 |
+|     1005 |       4 | 2023-06-15 |     65000.00 |
++----------+---------+------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM order_items;
++---------------+----------+------------+----------+------------+
+| order_item_id | order_id | product_id | quantity | item_price |
++---------------+----------+------------+----------+------------+
+|             1 |     1001 |        101 |        1 |   70000.00 |
+|             2 |     1002 |        103 |        1 |    8000.00 |
+|             3 |     1003 |        104 |        1 |  120000.00 |
+|             4 |     1004 |        105 |        1 |    1500.00 |
+|             5 |     1005 |        102 |        1 |   65000.00 |
++---------------+----------+------------+----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> notee;

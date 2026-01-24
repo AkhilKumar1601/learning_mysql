@@ -1,0 +1,124 @@
+mysql> SELECT o.order_id, u.name, o.order_date, o.total_amount
+    -> FROM orders o
+    -> JOIN users u ON o.user_id = u.user_id;
++----------+--------------+------------+--------------+
+| order_id | name         | order_date | total_amount |
++----------+--------------+------------+--------------+
+|     1001 | Akhil Kumar  | 2023-05-01 |     70000.00 |
+|     1003 | Akhil Kumar  | 2023-05-10 |    120000.00 |
+|     1002 | Rahul Sharma | 2023-05-03 |      8000.00 |
+|     1004 | Sneha Patel  | 2023-06-01 |      1500.00 |
+|     1005 | Neha Singh   | 2023-06-15 |     65000.00 |
++----------+--------------+------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT o.order_id, p.product_name, oi.quantity, oi.item_price
+    -> FROM orders o
+    -> JOIN order_items oi ON o.order_id = oi.order_id
+    -> JOIN products p ON oi.product_id = p.product_id;
++----------+--------------------+----------+------------+
+| order_id | product_name       | quantity | item_price |
++----------+--------------------+----------+------------+
+|     1001 | iPhone 14          |        1 |   70000.00 |
+|     1003 | MacBook Air        |        1 |  120000.00 |
+|     1002 | Nike Shoes         |        1 |    8000.00 |
+|     1004 | T-Shirt            |        1 |    1500.00 |
+|     1005 | Samsung Galaxy S23 |        1 |   65000.00 |
++----------+--------------------+----------+------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT SUM(total_amount) AS total_revenue FROM orders;
++---------------+
+| total_revenue |
++---------------+
+|     264500.00 |
++---------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT p.category, SUM(oi.item_price * oi.quantity) AS revenue
+    -> FROM order_items oi
+    -> JOIN products p ON oi.product_id = p.product_id
+    -> GROUP BY p.category;
++-------------+-----------+
+| category    | revenue   |
++-------------+-----------+
+| Electronics | 255000.00 |
+| Fashion     |   9500.00 |
++-------------+-----------+
+2 rows in set (0.02 sec)
+
+mysql> SELECT user_id, COUNT(order_id) AS total_orders
+    -> FROM orders
+    -> GROUP BY user_id;
++---------+--------------+
+| user_id | total_orders |
++---------+--------------+
+|       1 |            2 |
+|       2 |            1 |
+|       3 |            1 |
+|       4 |            1 |
++---------+--------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT user_id, COUNT(*) AS activity_count
+    -> FROM user_activity
+    -> GROUP BY user_id
+    -> ORDER BY activity_count DESC;
++---------+----------------+
+| user_id | activity_count |
++---------+----------------+
+|       1 |              2 |
+|       2 |              1 |
+|       3 |              1 |
+|       4 |              1 |
++---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     MONTH(order_date) AS month,
+    ->     SUM(total_amount) AS revenue
+    -> FROM orders
+    -> GROUP BY MONTH(order_date);
++-------+-----------+
+| month | revenue   |
++-------+-----------+
+|     5 | 198000.00 |
+|     6 |  66500.00 |
++-------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     DATE(activity_time) AS activity_date,
+    ->     COUNT(DISTINCT user_id) AS daily_active_users
+    -> FROM user_activity
+    -> GROUP BY DATE(activity_time);
++---------------+--------------------+
+| activity_date | daily_active_users |
++---------------+--------------------+
+| 2023-05-01    |                  1 |
+| 2023-05-03    |                  1 |
+| 2023-06-01    |                  1 |
+| 2023-06-15    |                  1 |
++---------------+--------------------+
+4 rows in set (0.02 sec)
+
+mysql> SELECT *
+    -> FROM users
+    -> WHERE user_id NOT IN (
+    ->     SELECT DISTINCT user_id FROM orders
+    -> );
+Empty set (0.01 sec)
+
+mysql> SELECT user_id, SUM(total_amount) AS total_spent
+    -> FROM orders
+    -> GROUP BY user_id
+    -> ORDER BY total_spent DESC
+    -> LIMIT 1;
++---------+-------------+
+| user_id | total_spent |
++---------+-------------+
+|       1 |   190000.00 |
++---------+-------------+
+1 row in set (0.01 sec)
+
+mysql> notee;

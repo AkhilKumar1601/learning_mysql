@@ -1,0 +1,433 @@
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| ecommerce          |
+| information_schema |
+| performance_schema |
+| practice12         |
++--------------------+
+4 rows in set (0.01 sec)
+
+mysql> USE ecommerce;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SELECT SUM(o.total_amount) AS total_revenue FROM orders o;
++---------------+
+| total_revenue |
++---------------+
+|     264500.00 |
++---------------+
+1 row in set (0.01 sec)
+
+mysql> ^C
+mysql> SELECT SUM(o.total_amount) AS total_revenue FROM orders o;
++---------------+
+| total_revenue |
++---------------+
+|     264500.00 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT order_date, MONTH(order_date) FROM orders;
++------------+-------------------+
+| order_date | MONTH(order_date) |
++------------+-------------------+
+| 2023-05-01 |                 5 |
+| 2023-05-03 |                 5 |
+| 2023-05-10 |                 5 |
+| 2023-06-01 |                 6 |
+| 2023-06-15 |                 6 |
++------------+-------------------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT order_date, YEAR(order_date) FROM orders;
++------------+------------------+
+| order_date | YEAR(order_date) |
++------------+------------------+
+| 2023-05-01 |             2023 |
+| 2023-05-03 |             2023 |
+| 2023-05-10 |             2023 |
+| 2023-06-01 |             2023 |
+| 2023-06-15 |             2023 |
++------------+------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT SUM(o.total_amount), DATE_FORMAT(o.order_date, '%Y-%m') FROM orders o GROUP BY o.order_id;
++---------------------+------------------------------------+
+| SUM(o.total_amount) | DATE_FORMAT(o.order_date, '%Y-%m') |
++---------------------+------------------------------------+
+|            70000.00 | 2023-05                            |
+|             8000.00 | 2023-05                            |
+|           120000.00 | 2023-05                            |
+|             1500.00 | 2023-06                            |
+|            65000.00 | 2023-06                            |
++---------------------+------------------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT SUM(o.total_amount), DATE_FORMAT(o.order_date, '%Y-%m') FROM orders o GROUP BY MONTH(o.order_date);
+ERROR 1055 (42000): Expression #2 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.o.order_date' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT 
+    ->     DATE_FORMAT(o.order_date, '%Y-%m') AS order_month,
+    ->     SUM(o.total_amount) AS total_revenue
+    -> FROM orders o
+    -> GROUP BY DATE_FORMAT(o.order_date, '%Y-%m')
+    -> ORDER BY order_month;
++-------------+---------------+
+| order_month | total_revenue |
++-------------+---------------+
+| 2023-05     |     198000.00 |
+| 2023-06     |      66500.00 |
++-------------+---------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT
+    ->     o.order_date AS order_day,
+    ->     COUNT(o.order_id) AS total_orders
+    -> FROM orders o
+    -> GROUP BY o.order_date
+    -> ORDER BY o.order_date;
++------------+--------------+
+| order_day  | total_orders |
++------------+--------------+
+| 2023-05-01 |            1 |
+| 2023-05-03 |            1 |
+| 2023-05-10 |            1 |
+| 2023-06-01 |            1 |
+| 2023-06-15 |            1 |
++------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     DATE(ua.activity_time) AS activity_day,
+    ->     COUNT(DISTINCT ua.user_id) AS daily_active_users
+    -> FROM user_activity ua
+    -> GROUP BY DATE(ua.activity_time)
+    -> ORDER BY activity_day;
++--------------+--------------------+
+| activity_day | daily_active_users |
++--------------+--------------------+
+| 2023-05-01   |                  1 |
+| 2023-05-03   |                  1 |
+| 2023-06-01   |                  1 |
+| 2023-06-15   |                  1 |
++--------------+--------------------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT MAX(table_1.total_revenue)
+    -> FROM ( SELECT 
+    ->     DATE_FORMAT(o.order_date, '%Y-%m') AS order_month,
+    ->     SUM(o.total_amount) AS total_revenue
+    -> FROM orders o
+    -> GROUP BY DATE_FORMAT(o.order_date, '%Y-%m')
+    -> ORDER BY order_month;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '' at line 7
+mysql> SELECT MAX(table_1.total_revenue)
+    ->  FROM ( SELECT
+    ->       DATE_FORMAT(o.order_date, '%Y-%m') AS order_month,
+    ->       SUM(o.total_amount) AS total_revenue
+    ->      FROM orders o
+    ->      GROUP BY DATE_FORMAT(o.order_date, '%Y-%m')
+    ->      ORDER BY order_month) AS table_1;
++----------------------------+
+| MAX(table_1.total_revenue) |
++----------------------------+
+|                  198000.00 |
++----------------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT
+    ->     o.order_date AS order_day,
+    ->     SUM(o.total_amount) AS daily_revenue
+    -> FROM orders o
+    -> GROUP BY o.order_date
+    -> ORDER BY daily_revenue DESC
+    -> LIMIT 1;
++------------+---------------+
+| order_day  | daily_revenue |
++------------+---------------+
+| 2023-05-10 |     120000.00 |
++------------+---------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT
+    ->     o.order_date AS order_day,
+    ->     SUM(o.total_amount) AS daily_revenue
+    -> FROM orders o
+    -> GROUP BY o.order_date
+    -> ORDER BY daily_revenue DESC;
++------------+---------------+
+| order_day  | daily_revenue |
++------------+---------------+
+| 2023-05-10 |     120000.00 |
+| 2023-05-01 |      70000.00 |
+| 2023-06-15 |      65000.00 |
+| 2023-05-03 |       8000.00 |
+| 2023-06-01 |       1500.00 |
++------------+---------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT u.name FROM users u
+    -> JOIN orders o ON u.user_id = o.user_id
+    -> ^C
+mysql> SELECT u.name FROM users u
+    -> LEFT JOIN orders o ON u.user_id = o.user_id
+    -> WHERE o.user_id IS NULL;
+Empty set (0.02 sec)
+
+mysql> SELECT AVG(p.price) FROM products p;
++--------------+
+| AVG(p.price) |
++--------------+
+| 52900.000000 |
++--------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT AVG(p.price) AS average_price FROm products p;
++---------------+
+| average_price |
++---------------+
+|  52900.000000 |
++---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT p.product_name, p.price FROM products p WHERE p.price > AVG(p.price);
+ERROR 1111 (HY000): Invalid use of group function
+mysql> SELECT p.product_name, p.price FROM products p WHERE p.price > (SELECT AVG(p.price) AS average_price FROM products p);
++--------------------+-----------+
+| product_name       | price     |
++--------------------+-----------+
+| iPhone 14          |  70000.00 |
+| Samsung Galaxy S23 |  65000.00 |
+| MacBook Air        | 120000.00 |
++--------------------+-----------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT p.product_name, p.price FROM products p;
++--------------------+-----------+
+| product_name       | price     |
++--------------------+-----------+
+| iPhone 14          |  70000.00 |
+| Samsung Galaxy S23 |  65000.00 |
+| Nike Shoes         |   8000.00 |
+| MacBook Air        | 120000.00 |
+| T-Shirt            |   1500.00 |
++--------------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT o.order_it, o.total_amount FROM orders o WHERE o.total_amount > (SELECT AVG(o.total_amount) AS average_total_amount FROM orders o);
+ERROR 1054 (42S22): Unknown column 'o.order_it' in 'field list'
+mysql>  SELECT o.order_id, o.total_amount FROM orders o WHERE o.total_amount > (SELECT AVG(o.total_amount) AS average_total_amount FROM orders o);
++----------+--------------+
+| order_id | total_amount |
++----------+--------------+
+|     1001 |     70000.00 |
+|     1003 |    120000.00 |
+|     1005 |     65000.00 |
++----------+--------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT u.user_id, u.name FROM users u JOIN orders o ON u.user_id = o.user_id WHERE o.total_amount > 100000;
++---------+-------------+
+| user_id | name        |
++---------+-------------+
+|       1 | Akhil Kumar |
++---------+-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT u.name, SUM(o.total_amount) AS total_order_amount_per_user
+    -> FROM users u
+    -> JOIN orders o ON u.user_id = o.user_id
+    -> GROUP BY u.user_id
+    -> HAVING SUM(o.total_amount) > 100000;
++-------------+-----------------------------+
+| name        | total_order_amount_per_user |
++-------------+-----------------------------+
+| Akhil Kumar |                   190000.00 |
++-------------+-----------------------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT u.name, SUM(o.total_amount) AS total_order_amount_per_user
+    -> FROM users u
+    -> JOIN orders o ON u.user_id = o.user_id
+    -> GROUP BY u.user_id
+    -> ORDER BY total_order_amount_per_user DESC
+    -> LIMIT 3;
++--------------+-----------------------------+
+| name         | total_order_amount_per_user |
++--------------+-----------------------------+
+| Akhil Kumar  |                   190000.00 |
+| Neha Singh   |                    65000.00 |
+| Rahul Sharma |                     8000.00 |
++--------------+-----------------------------+
+3 rows in set (0.01 sec)
+
+mysql> ^C
+mysql> ^C
+mysql> SELECT u.name, SUM(o.total_amount) AS total_order_amount_per_user
+    -> FROM users u
+    -> JOIN orders o ON u.user_id = o.user_id
+    -> GROUP BY u.user_id
+    -> ORDER BY total_order_amount_per_user DESC;
++--------------+-----------------------------+
+| name         | total_order_amount_per_user |
++--------------+-----------------------------+
+| Akhil Kumar  |                   190000.00 |
+| Neha Singh   |                    65000.00 |
+| Rahul Sharma |                     8000.00 |
+| Sneha Patel  |                     1500.00 |
++--------------+-----------------------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     u.name,
+    ->     SUM(o.total_amount) AS total_order_amount_per_user,
+    ->     RANK() OVER (ORDER BY SUM(o.total_amount) DESC) AS spending_rank
+    -> FROM users u
+    -> JOIN orders o
+    ->     ON u.user_id = o.user_id
+    -> GROUP BY u.user_id, u.name
+    -> ORDER BY spending_rank;
++--------------+-----------------------------+---------------+
+| name         | total_order_amount_per_user | spending_rank |
++--------------+-----------------------------+---------------+
+| Akhil Kumar  |                   190000.00 |             1 |
+| Neha Singh   |                    65000.00 |             2 |
+| Rahul Sharma |                     8000.00 |             3 |
+| Sneha Patel  |                     1500.00 |             4 |
++--------------+-----------------------------+---------------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT p.product_name, p.product_id, SUM(oi.quantity) AS total_quantity_per_user 
+    -> FROM products p
+    -> LEFT JOIN order_items oi ON p.product_id = oi.product_id
+    -> GROUP BY p.product_id, p.product_name
+    -> ORDER BY total_quantity_per_user
+    -> LIMIT 1;
++--------------+------------+-------------------------+
+| product_name | product_id | total_quantity_per_user |
++--------------+------------+-------------------------+
+| iPhone 14    |        101 |                       1 |
++--------------+------------+-------------------------+
+1 row in set (0.03 sec)
+
+mysql> SELECT p.product_name, p.product_id, SUM(oi.quantity) AS total_quantity_per_user
+    -> FROM products p
+    ->  LEFT JOIN order_items oi ON p.product_id = oi.product_id
+    -> GROUP BY p.product_id, p.product_name
+    -> ORDER BY total_quantity_per_user;
++--------------------+------------+-------------------------+
+| product_name       | product_id | total_quantity_per_user |
++--------------------+------------+-------------------------+
+| iPhone 14          |        101 |                       1 |
+| Samsung Galaxy S23 |        102 |                       1 |
+| Nike Shoes         |        103 |                       1 |
+| MacBook Air        |        104 |                       1 |
+| T-Shirt            |        105 |                       1 |
++--------------------+------------+-------------------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT
+    ->     p.product_name,
+    ->     SUM(oi.quantity) AS total_quantity_sold
+    -> FROM products p
+    -> JOIN order_items oi
+    ->     ON p.product_id = oi.product_id
+    -> GROUP BY p.product_id, p.product_name
+    -> ORDER BY total_quantity_sold DESC
+    -> LIMIT 1;
++--------------+---------------------+
+| product_name | total_quantity_sold |
++--------------+---------------------+
+| iPhone 14    |                   1 |
++--------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT
+    ->     p.product_name,
+    ->     SUM(oi.quantity) AS total_quantity_sold
+    -> 
+    -> FROM products p
+    -> ^C
+mysql> SELECT
+    ->     p.product_name,
+    ->     p.category,
+    ->     SUM(oi.quantity) AS total_quantity_sold
+    -> FROM products p
+    -> JOIN order_items oi
+    ->     ON p.product_id = oi.product_id
+    -> GROUP BY p.product_id, p.product_name
+    -> ORDER BY total_quantity_sold DESC
+    -> LIMIT 1;
++--------------+-------------+---------------------+
+| product_name | category    | total_quantity_sold |
++--------------+-------------+---------------------+
+| iPhone 14    | Electronics |                   1 |
++--------------+-------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql>  SELECT
+    ->          p.product_name,
+    ->          p.category,
+    ->          SUM(oi.quantity) AS total_quantity_sold
+    ->      FROM products p
+    ->      JOIN order_items oi
+    ->          ON p.product_id = oi.product_id
+    ->      GROUP BY p.category
+    ->      ORDER BY total_quantity_sold DESC
+    ->      LIMIT 1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.p.product_name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql>  SELECT
+    ->          p.product_name,
+    ->          p.category,
+    ->          SUM(oi.quantity) AS total_quantity_sold
+    ->      FROM products p
+    ->      JOIN order_items oi
+    ->          ON p.product_id = oi.product_id
+    ->      GROUP BY p.category
+    ->      ORDER BY total_quantity_sold DESC
+    ->      LIMIT 1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.p.product_name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql>  SELECT
+    ->          p.product_name,
+    ->          p.category,
+    ->          SUM(oi.quantity) AS total_quantity_sold
+    ->      FROM products p
+    ->      JOIN order_items oi
+    ->          ON p.product_id = oi.product_id
+    ->      GROUP BY p.category
+    ->      ORDER BY total_quantity_sold DESC
+    ->      LIMIT 1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.p.product_name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql>  SELECT
+    ->          p.product_name,
+    ->          p.category,
+    ->          SUM(oi.quantity) AS total_quantity_sold
+    ->      FROM products p
+    ->      JOIN order_items oi
+    ->          ON p.product_id = oi.product_id
+    ->      GROUP BY p.category
+    ->      ORDER BY total_quantity_sold DESC
+    ->      LIMIT 1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.p.product_name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT p.product_name,p.category,SUM(oi.quantity) AS total_quantity_sold FROM products p JOIN order_items oi ON p.product_id = oi.product_id GROUP BY p.category ORDER BY total_quantity_sold DESC LIMIT 1;
+ERROR 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'ecommerce.p.product_name' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT
+    ->     p.category,
+    ->     SUM(oi.quantity) AS total_quantity_sold
+    -> FROM products p
+    -> JOIN order_items oi
+    ->     ON p.product_id = oi.product_id
+    -> GROUP BY p.category
+    -> ORDER BY total_quantity_sold DESC
+    -> LIMIT 1;
++-------------+---------------------+
+| category    | total_quantity_sold |
++-------------+---------------------+
+| Electronics |                   3 |
++-------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> notee;

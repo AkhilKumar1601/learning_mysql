@@ -1,0 +1,85 @@
+mysql> USE practice12;
+Reading table information for completion of table and column names
+You can turn off this feature to get a quicker startup with -A
+
+Database changed
+mysql> SHOW TABLES;
++----------------------+
+| Tables_in_practice12 |
++----------------------+
+| categories           |
+| order_items          |
+| orders               |
+| payments             |
+| products             |
+| users                |
++----------------------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM users;
++----+-------+-----------------+--------+---------------------+
+| id | name  | email           | city   | created_at          |
++----+-------+-----------------+--------+---------------------+
+|  1 | Akhil | akhil@gmail.com | Delhi  | 2026-01-19 16:54:14 |
+|  2 | Rohan | rohan@gmail.com | Mumbai | 2026-01-19 16:54:14 |
+|  3 | Sneha | sneha@gmail.com | Pune   | 2026-01-19 16:54:14 |
++----+-------+-----------------+--------+---------------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT * FROM products;
++----+------------+-------------+----------+-------+
+| id | name       | category_id | price    | stock |
++----+------------+-------------+----------+-------+
+|  1 | Laptop     |           1 | 65000.00 |    10 |
+|  2 | Mouse      |           3 |   800.00 |    50 |
+|  3 | Desk       |           2 |  5000.00 |    20 |
+|  4 | Headphones |           1 |  2500.00 |    30 |
+|  5 | Chair      |           2 |  3000.00 |    25 |
++----+------------+-------------+----------+-------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT * FROM payments;
++----+----------+--------------+----------------+----------+
+| id | order_id | payment_mode | payment_status | amount   |
++----+----------+--------------+----------------+----------+
+|  1 |        1 | UPI          | Success        | 66600.00 |
+|  2 |        2 | Card         | Pending        |  2500.00 |
+|  3 |        3 | NetBanking   | Success        |  6000.00 |
+|  4 |        4 | UPI          | Failed         |  5000.00 |
++----+----------+--------------+----------------+----------+
+4 rows in set (0.01 sec)
+
+mysql> SELECT * FROM orders;
++----+---------+---------------------+-----------+
+| id | user_id | order_date          | status    |
++----+---------+---------------------+-----------+
+|  1 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  2 |       2 | 2026-01-19 16:54:25 | Pending   |
+|  3 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  4 |       3 | 2026-01-19 16:54:25 | Cancelled |
++----+---------+---------------------+-----------+
+4 rows in set (0.02 sec)
+
+mysql> SELECT * FROM order_items;
++----+----------+------------+----------+----------+
+| id | order_id | product_id | quantity | price    |
++----+----------+------------+----------+----------+
+|  1 |        1 |          1 |        1 | 65000.00 |
+|  2 |        1 |          2 |        2 |   800.00 |
+|  3 |        2 |          4 |        1 |  2500.00 |
+|  4 |        3 |          5 |        2 |  3000.00 |
+|  5 |        4 |          3 |        1 |  5000.00 |
++----+----------+------------+----------+----------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT * FROM categories;
++----+---------------+
+| id | category_name |
++----+---------------+
+|  1 | Electronics   |
+|  2 | Furniture     |
+|  3 | Accessories   |
++----+---------------+
+3 rows in set (0.01 sec)
+
+mysql> notee;
