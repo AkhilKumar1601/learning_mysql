@@ -1,0 +1,9 @@
+-- Performance of sales monthly wise.
+SELECT
+MONTH(order_date) AS month,
+YEAR(order_date) AS year,
+ROUND(SUM(sales),2) AS monthly_sales
+FROM orders_fact
+GROUP BY MONTH(order_date), YEAR(order_date)
+ORDER BY month, year;
+

@@ -1,0 +1,10 @@
+-- total sales product wise.
+SELECT
+p.product_name,
+ROUND(SUM(sales),2) AS total_sales_product_wise
+FROM orders_fact
+JOIN products_dim p
+ON orders_fact.product_id = p.product_id
+GROUP BY p.product_name
+ORDER BY total_sales_product_wise
+LIMIT 10;

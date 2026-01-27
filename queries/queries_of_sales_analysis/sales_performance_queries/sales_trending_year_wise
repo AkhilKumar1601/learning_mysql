@@ -1,0 +1,7 @@
+-- Sales performance on yearly basis.
+SELECT
+YEAR(order_date) AS year,
+ROUND(SUM(sales),2) AS yearly_sales
+FROM orders_fact
+GROUP BY YEAR(order_date)
+ORDER BY year;
