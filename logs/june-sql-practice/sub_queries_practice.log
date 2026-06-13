@@ -1,0 +1,177 @@
+mysql> SELECT MAX(price)
+    -> FROM products
+    -> WHERE price < (
+    -> SELECT MAX(price)
+    -> FROM products );
++------------+
+| MAX(price) |
++------------+
+|    5000.00 |
++------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT name
+    -> FROM user
+    -> WHERE id IN (
+    -> SELECT user_id  
+    -> FROM orders );
+ERROR 1146 (42S02): Table 'practice12.user' doesn't exist
+mysql> SELECT name 
+    -> FROM users
+    -> WHERE id IN (
+    -> SELECT user_id 
+    -> FROM orders );
++-------+
+| name  |
++-------+
+| Akhil |
+| Rohan |
+| Sneha |
++-------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT MAX(price) 
+    -> FROM products
+    -> WHERE price < (
+    -> SELECT MAX(price)
+    -> FROM products);
++------------+
+| MAX(price) |
++------------+
+|    5000.00 |
++------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT MIN(price) 
+    -> FROM products
+    -> WHERE price > (
+    -> SELECT MIN(price)
+    -> FROM products);
++------------+
+| MIN(price) |
++------------+
+|    2500.00 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT price FROM products DESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DESC' at line 1
+mysql> SELECT price FROM products ORDER BY DESC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'DESC' at line 1
+mysql> SELECT price
+    -> FROM products
+    -> ORDER BY ASC;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'ASC' at line 3
+mysql> SELECT price FROM products ORDER BY  price DESC;
++----------+
+| price    |
++----------+
+| 65000.00 |
+|  5000.00 |
+|  3000.00 |
+|  2500.00 |
+|   800.00 |
++----------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT price FROM products ORDER BY price ASC;
++----------+
+| price    |
++----------+
+|   800.00 |
+|  2500.00 |
+|  3000.00 |
+|  5000.00 |
+| 65000.00 |
++----------+
+5 rows in set (0.01 sec)
+
+mysql> SELECT * FROM orders;
++----+---------+---------------------+-----------+
+| id | user_id | order_date          | status    |
++----+---------+---------------------+-----------+
+|  1 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  2 |       2 | 2026-01-19 16:54:25 | Pending   |
+|  3 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  4 |       3 | 2026-01-19 16:54:25 | Cancelled |
++----+---------+---------------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT name
+    -> FROM users
+    -> WHERE id IN (
+    -> SELECT user_id
+    -> FROM orders);
++-------+
+| name  |
++-------+
+| Akhil |
+| Rohan |
+| Sneha |
++-------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT name
+    -> FROM users
+    -> WHERE id IS NULL IN (
+    -> SELECT user_id
+    -> FROM orders);
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'IN (
+SELECT user_id
+FROM orders)' at line 3
+mysql> SELECT name 
+    -> FROM users 
+    -> WHERE id NOT IN (
+    -> SELECT user_id
+    -> FROM orders);
+Empty set (0.00 sec)
+
+mysql> SELECT price
+    -> FROM products
+    -> WHERE price > (
+    -> SELECT AVG(price)
+    -> FROM products);
++----------+
+| price    |
++----------+
+| 65000.00 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> SELECT name, price 
+    -> FROM products 
+    -> WHERE price > (
+    -> SELECT AVG(price)
+    -> FROM products);
++--------+----------+
+| name   | price    |
++--------+----------+
+| Laptop | 65000.00 |
++--------+----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++----+------------+-------------+----------+-------+
+| id | name       | category_id | price    | stock |
++----+------------+-------------+----------+-------+
+|  1 | Laptop     |           1 | 65000.00 |    10 |
+|  2 | Mouse      |           3 |   800.00 |    50 |
+|  3 | Desk       |           2 |  5000.00 |    20 |
+|  4 | Headphones |           1 |  2500.00 |    30 |
+|  5 | Chair      |           2 |  3000.00 |    25 |
++----+------------+-------------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT name,price
+    -> FROM products
+    -> WHERE price > (
+    -> SELECT MAX(price)
+    -> FROM products WHERE category_id = 2);
++--------+----------+
+| name   | price    |
++--------+----------+
+| Laptop | 65000.00 |
++--------+----------+
+1 row in set (0.01 sec)
+
+mysql> notee;

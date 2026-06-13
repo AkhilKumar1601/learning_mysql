@@ -1,0 +1,191 @@
+mysql> SELECT COUNT(*) FROM users;
++----------+
+| COUNT(*) |
++----------+
+|        3 |
++----------+
+1 row in set (0.03 sec)
+
+mysql> SELECT SUM(amount) FROM payments;
++-------------+
+| SUM(amount) |
++-------------+
+|    80100.00 |
++-------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT AVG(price) FROM products;
++--------------+
+| AVG(price)   |
++--------------+
+| 15260.000000 |
++--------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT MAX(price) FROM products;
++------------+
+| MAX(price) |
++------------+
+|   65000.00 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MIN(price) FROM Products;
+ERROR 1146 (42S02): Table 'practice12.Products' doesn't exist
+mysql> SELECT MIN(price FROM products;
+ERROR 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'FROM products' at line 1
+mysql> SELECT MIN(price) FROM products;
++------------+
+| MIN(price) |
++------------+
+|     800.00 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM products;
++----------+
+| COUNT(*) |
++----------+
+|        5 |
++----------+
+1 row in set (0.02 sec)
+
+mysql> SELECT COUNT(*) FROM users;
++----------+
+| COUNT(*) |
++----------+
+|        3 |
++----------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(stock) FROM products;
++--------------+
+| COUNT(stock) |
++--------------+
+|            5 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SUM(stock) FROM products;
++------------+
+| SUM(stock) |
++------------+
+|        135 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(price) FROM products;
++--------------+
+| AVG(price)   |
++--------------+
+| 15260.000000 |
++--------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MAX(amount) FROM payments;
++-------------+
+| MAX(amount) |
++-------------+
+|    66600.00 |
++-------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT MIN(amount) FROM payments;
++-------------+
+| MIN(amount) |
++-------------+
+|     2500.00 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT SUM(amount) FROM payments;
++-------------+
+| SUM(amount) |
++-------------+
+|    80100.00 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT AVG(stock) FROM products;
++------------+
+| AVG(stock) |
++------------+
+|    27.0000 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++----+------------+-------------+----------+-------+
+| id | name       | category_id | price    | stock |
++----+------------+-------------+----------+-------+
+|  1 | Laptop     |           1 | 65000.00 |    10 |
+|  2 | Mouse      |           3 |   800.00 |    50 |
+|  3 | Desk       |           2 |  5000.00 |    20 |
+|  4 | Headphones |           1 |  2500.00 |    30 |
+|  5 | Chair      |           2 |  3000.00 |    25 |
++----+------------+-------------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT MAX(stock*price), name FROM products;
+ERROR 1140 (42000): In aggregated query without GROUP BY, expression #2 of SELECT list contains nonaggregated column 'practice12.products.name'; this is incompatible with sql_mode=only_full_group_by
+mysql> SELECT MAX(stock) FROM products;
++------------+
+| MAX(stock) |
++------------+
+|         50 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT MIN(price) FROM product;
+ERROR 1146 (42S02): Table 'practice12.product' doesn't exist
+mysql> SELECT MIN(price) FROM prodcuts;
+ERROR 1146 (42S02): Table 'practice12.prodcuts' doesn't exist
+mysql> SELECT MIN(price) FROM products;
++------------+
+| MIN(price) |
++------------+
+|     800.00 |
++------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM payments WHERE status="success";
+ERROR 1054 (42S22): Unknown column 'status' in 'where clause'
+mysql> SELECT * FROM payments;
++----+----------+--------------+----------------+----------+
+| id | order_id | payment_mode | payment_status | amount   |
++----+----------+--------------+----------------+----------+
+|  1 |        1 | UPI          | Success        | 66600.00 |
+|  2 |        2 | Card         | Pending        |  2500.00 |
+|  3 |        3 | NetBanking   | Success        |  6000.00 |
+|  4 |        4 | UPI          | Failed         |  5000.00 |
++----+----------+--------------+----------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) FROM payments WHERE payment_status="Success";
++----------+
+| COUNT(*) |
++----------+
+|        2 |
++----------+
+1 row in set (0.01 sec)
+
+mysql> SELECT MAX(amount)
+    -> FROM payments
+    -> WHERE amount < (
+    -> SELECT MAX(amount) FROM payments);
++-------------+
+| MAX(amount) |
++-------------+
+|     6000.00 |
++-------------+
+1 row in set (0.02 sec)
+
+mysql> SELECT MIN(amount) FROM payments WHERE amount > (SELECT MIN(amount) FROM payments);
++-------------+
+| MIN(amount) |
++-------------+
+|     5000.00 |
++-------------+
+1 row in set (0.00 sec)
+
+mysql> notee;

@@ -1,0 +1,179 @@
+mysql> SELECT payment_mode, SUM(amount) as total_amount
+    -> FROM payments
+    -> GROUP BY payment_mode
+    -> HAVING SUM(payment_mode) > 5000;
+Empty set, 4 warnings (0.02 sec)
+
+mysql> SELECT * FROM payments;
++----+----------+--------------+----------------+----------+
+| id | order_id | payment_mode | payment_status | amount   |
++----+----------+--------------+----------------+----------+
+|  1 |        1 | UPI          | Success        | 66600.00 |
+|  2 |        2 | Card         | Pending        |  2500.00 |
+|  3 |        3 | NetBanking   | Success        |  6000.00 |
+|  4 |        4 | UPI          | Failed         |  5000.00 |
++----+----------+--------------+----------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT payment_mode,
+    ->        SUM(amount) AS total_amount
+    -> FROM payments
+    -> GROUP BY payment_mode
+    -> HAVING SUM(amount) > 5000;
++--------------+--------------+
+| payment_mode | total_amount |
++--------------+--------------+
+| UPI          |     71600.00 |
+| NetBanking   |      6000.00 |
++--------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM payments;
++----+----------+--------------+----------------+----------+
+| id | order_id | payment_mode | payment_status | amount   |
++----+----------+--------------+----------------+----------+
+|  1 |        1 | UPI          | Success        | 66600.00 |
+|  2 |        2 | Card         | Pending        |  2500.00 |
+|  3 |        3 | NetBanking   | Success        |  6000.00 |
+|  4 |        4 | UPI          | Failed         |  5000.00 |
++----+----------+--------------+----------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT payment_mode, SUM(amount) 
+    -> FROM payments
+    -> GROUP BY payment_mode
+    -> HAVING SUM(amount) > 5000;
++--------------+-------------+
+| payment_mode | SUM(amount) |
++--------------+-------------+
+| UPI          |    71600.00 |
+| NetBanking   |     6000.00 |
++--------------+-------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT * FROM categories;
++----+---------------+
+| id | category_name |
++----+---------------+
+|  1 | Electronics   |
+|  2 | Furniture     |
+|  3 | Accessories   |
++----+---------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM orders;
++----+---------+---------------------+-----------+
+| id | user_id | order_date          | status    |
++----+---------+---------------------+-----------+
+|  1 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  2 |       2 | 2026-01-19 16:54:25 | Pending   |
+|  3 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  4 |       3 | 2026-01-19 16:54:25 | Cancelled |
++----+---------+---------------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM products;
++----+------------+-------------+----------+-------+
+| id | name       | category_id | price    | stock |
++----+------------+-------------+----------+-------+
+|  1 | Laptop     |           1 | 65000.00 |    10 |
+|  2 | Mouse      |           3 |   800.00 |    50 |
+|  3 | Desk       |           2 |  5000.00 |    20 |
+|  4 | Headphones |           1 |  2500.00 |    30 |
+|  5 | Chair      |           2 |  3000.00 |    25 |
++----+------------+-------------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT category_id, AVG(price)
+    -> FROM products
+    -> GROUP BY category_id
+    -> HAVING AVG(price) > 3000;
++-------------+--------------+
+| category_id | AVG(price)   |
++-------------+--------------+
+|           1 | 33750.000000 |
+|           2 |  4000.000000 |
++-------------+--------------+
+2 rows in set (0.02 sec)
+
+mysql> SELECT category_id, SUM(stock) 
+    -> FROM products
+    -> GROUP BY category_id
+    -> HAVING SUM(stock) > 40;
++-------------+------------+
+| category_id | SUM(stock) |
++-------------+------------+
+|           2 |         45 |
+|           3 |         50 |
++-------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM orders;
++----+---------+---------------------+-----------+
+| id | user_id | order_date          | status    |
++----+---------+---------------------+-----------+
+|  1 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  2 |       2 | 2026-01-19 16:54:25 | Pending   |
+|  3 |       1 | 2026-01-19 16:54:25 | Delivered |
+|  4 |       3 | 2026-01-19 16:54:25 | Cancelled |
++----+---------+---------------------+-----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT status,COUNT(status) 
+    -> FROM orders
+    -> GROUP BY status
+    -> HAVING COUNT(status) > 1;
++-----------+---------------+
+| status    | COUNT(status) |
++-----------+---------------+
+| Delivered |             2 |
++-----------+---------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM payments;
++----+----------+--------------+----------------+----------+
+| id | order_id | payment_mode | payment_status | amount   |
++----+----------+--------------+----------------+----------+
+|  1 |        1 | UPI          | Success        | 66600.00 |
+|  2 |        2 | Card         | Pending        |  2500.00 |
+|  3 |        3 | NetBanking   | Success        |  6000.00 |
+|  4 |        4 | UPI          | Failed         |  5000.00 |
++----+----------+--------------+----------------+----------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT payment_status, SUM(amount)
+    -> FROM payments
+    -> GROUP BY payment_status
+    -> HAVING SUM(amount) > 10000;
++----------------+-------------+
+| payment_status | SUM(amount) |
++----------------+-------------+
+| Success        |    72600.00 |
++----------------+-------------+
+1 row in set (0.01 sec)
+
+mysql> SELECT * FROM products;
++----+------------+-------------+----------+-------+
+| id | name       | category_id | price    | stock |
++----+------------+-------------+----------+-------+
+|  1 | Laptop     |           1 | 65000.00 |    10 |
+|  2 | Mouse      |           3 |   800.00 |    50 |
+|  3 | Desk       |           2 |  5000.00 |    20 |
+|  4 | Headphones |           1 |  2500.00 |    30 |
+|  5 | Chair      |           2 |  3000.00 |    25 |
++----+------------+-------------+----------+-------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT category_id, MAX(price) 
+    -> FROM products
+    -> GROUP BY category_id
+    -> HAVING MAX(price) > 4000;
++-------------+------------+
+| category_id | MAX(price) |
++-------------+------------+
+|           1 |   65000.00 |
+|           2 |    5000.00 |
++-------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> notee;
